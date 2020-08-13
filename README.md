@@ -9,5 +9,5 @@ Golang1.14.7 + redis5.0.9 for Windows
 
 #### 2.相关包地址
 
-[go-redis地址](https://github.com/go-redis/redis "go-redis地址")
-[redigo地址](https://github.com/gomodule/redigo "redigo地址")
+[go-redis地址](https://github.com/go-redis/redis)
+[redigo地址](https://github.com/gomodule/redigo)
