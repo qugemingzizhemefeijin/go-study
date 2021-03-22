@@ -9,7 +9,13 @@ type Person struct {
 	Name string
 }
 
-//为了
+//这个方法可以证明结构体实际就是值传递
+func (p Person) changeName(name string) {
+	oldName := p.Name
+	p.Name = name
+	fmt.Println(oldName, " change new Name", name)
+}
+
 func (p Person) sayHello() {
 	fmt.Println(p.Name, " say Hello!")
 }
@@ -42,6 +48,7 @@ func main() {
 	//1) 结构体类型是值类型，在方法调用中，遵守值类型的传递机制，是值拷贝传递方式；
 	//2) 如程序员希望在方法中，修改结构体变量的值，可以通过结构体指针的方式来处理；(实际通常是绑定指针，因为可以加快调用速度)
 	p := Person{"Amy"}
+	p.changeName("Tom")
 	//标准的访问方式应该如下写(编译器自动添加了&p了)：
 	//(&p).speak()
 	p.speak()

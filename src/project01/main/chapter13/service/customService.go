@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_code/project01/main/chapter13/model"
+	"project01/main/chapter13/model"
 )
 
 //CustomerService 该结构体完成对Customer的操作，包括增删改查

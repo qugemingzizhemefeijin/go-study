@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go_code/project01/main/chapter12/utils"
+	"project01/main/chapter12/utils"
 )
 
 func main() {
