@@ -40,3 +40,6 @@ Thumbs.db
 
 #ios
 .apt_generated/
+
+# vs code
+*__debug_bin
