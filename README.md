@@ -37,3 +37,8 @@ go env -w GOSUMDB=“sum.golang.org”
 go get -v golang.org/x/tools/gopls
 go get -u github.com/derekparker/delve/cmd/dlv
 ```
+
+开启CGO
+```
+set CGO_ENABLED=1
+```
