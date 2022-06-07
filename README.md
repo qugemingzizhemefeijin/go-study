@@ -35,4 +35,5 @@ go env -w GOSUMDB=“sum.golang.org”
 修改代理到国内的go，然后在 cmd 重新获取即可成功：
 ```
 go get -v golang.org/x/tools/gopls
+go get -u github.com/derekparker/delve/cmd/dlv
 ```
