@@ -22,3 +22,17 @@ Golang1.14.7 + redis5.0.9 for Windows
 | 添加注释和取消注释 | ctrl + / |
 | 快速修改 | ctrl + . |
 | 快速格式化代码 | shift + alt + f |
+
+#### 4.vscode 安装go环境无法安装gopls等插件，响应超时、失去连接等问题的简单解决方案
+
+解决方案是修改代理，然后在`cmd`下面输入：
+```
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+go env -w GOSUMDB=“sum.golang.org”
+```
+
+修改代理到国内的go，然后在 cmd 重新获取即可成功：
+```
+go get -v golang.org/x/tools/gopls
+```
