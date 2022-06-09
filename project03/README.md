@@ -39,4 +39,21 @@
 - `CXXFLAGS`对应纯`C++`编译参数(.cc,.cpp,*.cxx)
 - `LDFLAGS`链接参数主要包含要链接库的检索目录和要链接库的名字。链接库不支持相对路径，我们必须为链接库指定绝对路径。`cgo`中的`${SRCDIR}`为当前目录的绝对路径。
 
+### dlv debug调式
 
+| 命令 | 描述 |
+| --- | --- |
+| dlv debug	| 目录执行此命令 |
+| help | 查看帮助 |
+| break main.main | 在main方法处设置断点 |
+| breakpoints | 查看所有断点 |
+| vars main | 查看全局变量 |
+| continue | 执行到下一个断点 |
+| next | 单步执行进入 |
+| args | 查看函数参数 |
+| locals | 查看局部变量 |
+| stack | 查看当前执行函数的栈帧信息 |
+| goroutine | 查看当前Goroutine信息 |
+| goroutines | 查看所有的Goroutine信息 |
+| disassemble | 查看函数对应的汇编代码 |
+| regs | 查看全部的寄存器状态 |
