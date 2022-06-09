@@ -23,6 +23,8 @@ import (
 
 // gcc -o a.out _test_main.c main.a
 // ./a.out
+
+// 我们并没有包含CGO⾃动⽣成的main.h头⽂件，⽽是通过⼿⼯⽅式声明了goPrintln和number_add_mod两个导出函数。这样我们就实现了从多个Go包导出C函数了。
 func main() {
 	println("Done")
 }

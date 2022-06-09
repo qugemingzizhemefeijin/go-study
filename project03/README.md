@@ -32,3 +32,11 @@
 | int64_t  | C.int64_t  | int64 |
 | uint64_t | C.uint64_t | uint64 |
 
+### 编译参数
+
+- `CFLAGS`对应`C`语言编译参数(以 .c 后缀名)
+- `CPPFLAGS`对应`C/C++`代码编译参数(.c,.cc,.cpp,.cxx)
+- `CXXFLAGS`对应纯`C++`编译参数(.cc,.cpp,*.cxx)
+- `LDFLAGS`链接参数主要包含要链接库的检索目录和要链接库的名字。链接库不支持相对路径，我们必须为链接库指定绝对路径。`cgo`中的`${SRCDIR}`为当前目录的绝对路径。
+
+
