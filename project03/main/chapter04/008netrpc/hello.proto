@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package main;
+option go_package = "./pb";// 生成到当前目录
+
+message String {
+    string value = 1;
+}
+
+// 通过 Protobuf 来定义 HelloService 服务
+service HelloService {
+    rpc Hello (String) returns (String);
+}

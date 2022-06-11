@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package main;
+option go_package = "./pb";// 生成到当前目录
+
+message String {
+    string value = 1;
+}
