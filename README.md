@@ -120,3 +120,17 @@ protoc --go_out=plugins=grpc:. hello.proto
 ```
 const TheVersion = `go1.18`
 ```
+
+### 报错verifying module: invalid GOSUMDB: malformed verifier id
+
+关闭包验证：
+```
+go env -w GOSUMDB=off
+```
+
+### 报错no required module provides package google.golang.org/grpc: go.mod file not found in current directory or any parent directory
+
+解决办法：
+```
+go env -w GO111MODULE=auto
+```
