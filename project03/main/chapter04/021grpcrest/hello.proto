@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package service;
+option go_package = "./service";// 生成到当前目录
+
+import "google/api/annotations.proto";
+
+message StringMessage {
+    string value = 1;
+}
+
+service RestService {
+    rpc Get(StringMessage) returns (StringMessage) {
+        option (google.api.http) = {
+            get: "/get/{value}"
+        };
+    }
+    rpc Post(StringMessage) returns (StringMessage) {
+        option (google.api.http) = {
+            post: "/post"
+            body: "*"
+        };
+    }
+}
+
+//protoc --proto_path=${GOPATH}/src --proto_path=. --grpc-gateway_out=. --go_out=plugins=grpc:. hello.proto

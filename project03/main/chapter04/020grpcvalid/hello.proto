@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package service;
+option go_package = "./service";// 生成到当前目录
+
+// 我们可以在运行时通过类似反射的技术解析出 Message 每个成员定义的扩展选项，然后从每个扩展的相关联的信息中解析出我们定义的默认值。
+/*import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+    string default_string = 50000;
+    int32 default_int = 50001;
+}
+
+message Message {
+    string name = 1 [(default_string) = "gopher"];
+    int32 age = 2[(default_int) = 10];
+}
+*/
+// 在开源社区中，github.com/mwitkow/go-proto-validators 已经基于 Protobuf 的扩展特性实现了功能较为强大的验证器功能。
+// 要使用该验证器首先需要下载其提供的代码生成插件：
+// go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+// 在方括弧表示的成员扩展中，validator.field 表示扩展是 validator 包中定义的名为 field 扩展选项。
+// validator.field 的类型是 FieldValidator 结构体，在导入的 validator.proto 文件中定义。
+message Message {
+    string important_string = 1 [
+        (validator.field) = {regex: "^[a-z]{2,5}$"}
+    ];
+    int32 age = 2 [
+        (validator.field) = {int_gt: 0, int_lt: 100}
+    ];
+}
+
+//protoc --proto_path=${GOPATH}/src --proto_path=. --govalidators_out=. --go_out=plugins=grpc:. hello.proto
