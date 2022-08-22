@@ -134,3 +134,16 @@ go env -w GOSUMDB=off
 ```
 go env -w GO111MODULE=auto
 ```
+
+### 安装validator
+
+```
+go get github.com/go-playground/validator
+// go get安装时报错：unrecognized import path “golang.org/x/crypto/sha3“: https fetch: Get
+
+mkdir -p $GOPATH/src/golang.org/x           //-p层级递归创建
+cd $GOPATH/src/golang.org/x
+git clone https://github.com/golang/sync.git
+git clone https://github.com/golang/crypto.git
+git clone https://github.com/golang/sys.git
+```
