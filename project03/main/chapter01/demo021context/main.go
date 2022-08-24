@@ -16,10 +16,10 @@ func worker(ctx context.Context, wg *sync.WaitGroup) error {
 
 	for {
 		select {
-		default:
-			fmt.Println("Hello")
 		case <- ctx.Done():
 			return ctx.Err()
+		default:
+			fmt.Println("Hello")
 		}
 	}
 }
