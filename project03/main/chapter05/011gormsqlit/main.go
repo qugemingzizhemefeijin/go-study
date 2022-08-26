@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -43,6 +44,8 @@ func main() {
 		panic("failed to connect datebase")
 	}
 
+	db = db.Debug()
+
 	// 自动创建表
 	// 如果使用此来自动创建表，注意，结构体的字段必须要大写。
 	/**
@@ -59,7 +62,7 @@ func main() {
 	  IgnoreMe     int     `gorm:"-"` // 忽略本字段
 	}
 	 */
-	// db.AutoMigrate(&Product{})
+	_ = db.AutoMigrate(&Product{})
 
 	// 创建记录
 	db.Create(&Product{
@@ -76,6 +79,51 @@ func main() {
 	db.First(&product, "code = ?", "D42") // 通过属性来查询
 	print(product)
 
+	product = Product{}
+	db.Take(&product) // 不排序查询第一条数据
+	print(product)
+
+	product = Product{}
+	result := db.Last(&product) // 根据主键排序返回最后一条数据
+
+	println(result.RowsAffected)  // returns count of records found
+	println(result.Error)         // returns error or nil)
+
+	// check error ErrRecordNotFound
+	errors.Is(result.Error, gorm.ErrRecordNotFound)
+
+	// 如果你想避免 ErrRecordNotFound 错误，你可以使用 Find like db.Limit(1).Find(&user)，Find 方法接受结构和切片数据
+	db.Limit(1).Find(&product)
+
+	ret := map[string]interface{}{}
+	db.Model(&Product{}).First(&ret)
+
+	// doesn't work
+	//result := map[string]interface{}{}
+	// db.Table("users").First(&result)
+
+	ret = map[string]interface{}{}
+	db.Table("products").Take(&ret)
+
+	// no primary key defined, results will be ordered by first field (i.e., `Code`)
+	type Language struct {
+		Code string
+		Price uint
+	}
+	db.Table("products").First(&Language{})
+	// SELECT * FROM `languages` ORDER BY `languages`.`code` LIMIT 1
+
+	productList := make([]Product,0)
+	db.Find(&productList, []int{1,2,3})
+	data, _ := json.Marshal(productList)
+	//输出序列化后的结果
+	fmt.Printf("序列化列表=%v\n", string(data))
+
+	db.Where("code = 'aa'").Or(Product{Code: "bb", Price: 200}).Find(&productList)
+	data, _ = json.Marshal(productList)
+	//输出序列化后的结果
+	fmt.Printf("序列化列表=%v\n", string(data))
+
 	// 修改
 	db.Model(&product).Update("Price", 200) // 修改价格
 	print(product)
@@ -85,6 +133,7 @@ func main() {
 	db.Model(&product).Updates(map[string]interface{}{"Price": 300, "Code": "H48"})
 	print(product)
 
-	// 删除数据
-	db.Delete(&product, 2)
+	// 逻辑删除数据
+	// db.Delete(&product, 2)
+	db.Unscoped().Delete(&product, 2)
 }
