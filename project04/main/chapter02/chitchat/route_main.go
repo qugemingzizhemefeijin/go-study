@@ -9,11 +9,16 @@ import (
 // shows the error message page
 func err(writer http.ResponseWriter, request *http.Request) {
 	vals := request.URL.Query()
-	_, err := session(writer, request)
+	sess, err := session(writer, request)
 	if err != nil {
-		generateHTML(writer, vals.Get("msg"), "layout", "public.navbar", "error")
+		generateHTML(writer, &data.Model{
+			Data: vals.Get("msg"),
+		}, "layout", "public.navbar", "error")
 	} else {
-		generateHTML(writer, vals.Get("msg"), "layout", "private.navbar", "error")
+		generateHTML(writer, &data.Model{
+			Session: &sess,
+			Data: vals.Get("msg"),
+		}, "layout", "private.navbar", "error")
 	}
 }
 
@@ -22,11 +27,16 @@ func index(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		error_message(writer, request, "Cannot get threads")
 	} else {
-		_, err := session(writer, request)
+		sess, err := session(writer, request)
 		if err != nil {
-			generateHTML(writer, threads, "layout", "public.navbar", "index")
+			generateHTML(writer, &data.Model{
+				Data:    threads,
+			}, "layout", "public.navbar", "index")
 		} else {
-			generateHTML(writer, threads, "layout", "private.navbar", "index")
+			generateHTML(writer, &data.Model{
+				Session: &sess,
+				Data:    threads,
+			}, "layout", "private.navbar", "index")
 		}
 	}
 }

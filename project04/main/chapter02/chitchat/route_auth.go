@@ -30,6 +30,7 @@ func signupAccount(writer http.ResponseWriter, request *http.Request) {
 		Email:    request.PostFormValue("email"),
 		Password: request.PostFormValue("password"),
 	}
+	// 注册用户
 	if err := user.Create(); err != nil {
 		danger(err, "Cannot create user")
 	}

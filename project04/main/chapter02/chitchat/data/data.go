@@ -22,7 +22,7 @@ var Db *sql.DB
 // 一个可能的用途是在开始执行程序之前对数据进行检验或修复，以保证程序状态的正确性。
 func init() {
 	var err error
-	Db, err = sql.Open("mysql", "root:abcd1234@tcp(127.0.0.1:3306)/test")
+	Db, err = sql.Open("mysql", "root:abcd1234@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True")
 	if err != nil {
 		log.Fatal(err)
 	}

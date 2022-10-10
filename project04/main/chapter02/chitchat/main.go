@@ -37,6 +37,7 @@ func main() {
 	mux.HandleFunc("/thread/post", postThread)
 	mux.HandleFunc("/thread/read", readThread)
 
+	// 启动服务，从配置文件中读取绑定的地址和端口
 	server := &http.Server{
 		Addr: config.Address,
 		Handler: mux,

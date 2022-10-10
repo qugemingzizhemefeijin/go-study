@@ -34,13 +34,19 @@ func (user *User) CreateSession() (session Session, err error) {
 	currTime := time.Now()
 
 	// use QueryRow to return a row and scan the returned id into the Session struct
-	_, err = stmt.Exec(uuid, user.Email, user.Id, currTime)
+	result, err := stmt.Exec(uuid, user.Email, user.Id, currTime)
+	if err != nil {
+		return
+	}
+
+	id, _ := result.LastInsertId()
 
 	// 设置session的信息并返回
 	session.Uuid = uuid
 	session.Email = user.Email
 	session.UserId = user.Id
 	session.CreatedAt = currTime
+	session.Id = int(id)
 
 	return
 }
@@ -48,14 +54,14 @@ func (user *User) CreateSession() (session Session, err error) {
 // Get the session for an existing user
 func (user *User) Session() (session Session, err error) {
 	session = Session{}
-	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE user_id = $1", user.Id).
+	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE user_id = ?", user.Id).
 		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	return
 }
 
 // Check if session is valid in the database
 func (session *Session) Check() (valid bool, err error) {
-	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = $1", session.Uuid).
+	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = ?", session.Uuid).
 		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	if err != nil {
 		valid = false
@@ -69,7 +75,7 @@ func (session *Session) Check() (valid bool, err error) {
 
 // Delete session from database
 func (session *Session) DeleteByUUID() (err error) {
-	statement := "delete from sessions where uuid = $1"
+	statement := "delete from sessions where uuid = ?"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -83,7 +89,15 @@ func (session *Session) DeleteByUUID() (err error) {
 // Get the user from the session
 func (session *Session) User() (user User, err error) {
 	user = User{}
-	err = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = $1", session.UserId).
+	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", session.UserId).
+		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
+	return
+}
+
+// Get the user from the session and not return error
+func (session *Session) Luxifa() (user User) {
+	user = User{}
+	_ = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", session.UserId).
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }
@@ -115,7 +129,7 @@ func (user *User) Create() (err error) {
 
 // Delete user from database
 func (user *User) Delete() (err error) {
-	statement := "delete from users where id = $1"
+	statement := "delete from users where id = ?"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -128,7 +142,7 @@ func (user *User) Delete() (err error) {
 
 // Update user information in the database
 func (user *User) Update() (err error) {
-	statement := "update users set name = $2, email = $3 where id = $1"
+	statement := "update users set name = ?, email = ? where id = ?"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -166,7 +180,7 @@ func Users() (users []User, err error) {
 // Get a single user given the email
 func UserByEmail(email string) (user User, err error) {
 	user = User{}
-	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE email = $1", email).
+	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE email = ?", email).
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }
@@ -174,7 +188,7 @@ func UserByEmail(email string) (user User, err error) {
 // Get a single user given the UUID
 func UserByUUID(uuid string) (user User, err error) {
 	user = User{}
-	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE uuid = $1", uuid).
+	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE uuid = ?", uuid).
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }

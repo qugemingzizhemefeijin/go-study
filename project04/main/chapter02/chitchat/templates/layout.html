@@ -11,11 +11,11 @@
     <link href="/static/css/font-awesome.min.css" rel="stylesheet">
   </head>
   <body>
-    {{ template "navbar" . }}
+    {{ template "navbar" .Session }}
 
     <div class="container">
       
-      {{ template "content" . }}
+      {{ template "content" .Data }}
       
     </div> <!-- /container -->
     

@@ -9,11 +9,13 @@ import (
 // GET /threads/new
 // Show the new thread form page
 func newThread(writer http.ResponseWriter, request *http.Request) {
-	_, err := session(writer, request)
+	sess, err := session(writer, request)
 	if err != nil {
 		http.Redirect(writer, request, "/login", 302)
 	} else {
-		generateHTML(writer, nil, "layout", "private.navbar", "new.thread")
+		generateHTML(writer, &data.Model{
+			Session: &sess,
+		}, "layout", "private.navbar", "new.thread")
 	}
 }
 
@@ -46,14 +48,20 @@ func readThread(writer http.ResponseWriter, request *http.Request) {
 	vals := request.URL.Query()
 	uuid := vals.Get("id")
 	thread, err := data.ThreadByUUID(uuid)
+
 	if err != nil {
 		error_message(writer, request, "Cannot read thread")
 	} else {
-		_, err := session(writer, request)
+		sess, err := session(writer, request)
 		if err != nil {
-			generateHTML(writer, &thread, "layout", "public.navbar", "public.thread")
+			generateHTML(writer, &data.Model{
+				Data: &thread,
+			}, "layout", "public.navbar", "public.thread")
 		} else {
-			generateHTML(writer, &thread, "layout", "private.navbar", "private.thread")
+			generateHTML(writer, &data.Model{
+				Session: &sess,
+				Data: &thread,
+			}, "layout", "private.navbar", "private.thread")
 		}
 	}
 }

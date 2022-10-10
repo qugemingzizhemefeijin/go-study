@@ -12,11 +12,12 @@ import (
 	"strings"
 )
 
+// 配置类
 type Configuration struct {
-	Address      string
-	ReadTimeout  int64
-	WriteTimeout int64
-	Static       string
+	Address      string		// 初始化的服务器地址和端口
+	ReadTimeout  int64		// 读数据超时
+	WriteTimeout int64		// 写数据超时
+	Static       string		// 静态文件配置目录
 }
 
 var config Configuration
@@ -38,6 +39,7 @@ func init() {
 	logger = log.New(file, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+// 读取json配置文件
 func loadConfig() {
 	file, err := os.Open("config.json")
 	if err != nil {
@@ -65,12 +67,23 @@ func session(writer http.ResponseWriter, request *http.Request) (sess data.Sessi
 		if ok, _ := sess.Check(); !ok {
 			err = errors.New("Invalid session")
 		}
+		info("check success : " + sess.Uuid + "===" + sess.Email)
 	}
 	return
 }
 
+// 1.使用 New() 在创建时就为其添加一个模板名称，并且执行 t.Execute() 会默认去寻找该名称进行数据融合；
+// 2.使用 ParseFiles() 创建模板可以一次指定多个文件加载多个模板进来，但是就不可以使用 t.Execute() 来执行数据融合；
+//   但是 ParseFiles() 可以通过 ExecuteTemplate 来进行数据融合，因为该函数可以指定模板名，
+//   因此，实例模板就可以知道要去加载自己内部的哪一个模板进行数据融合。
+
+// 当然无论使用 New() 还是 ParseFiles() 创建模板，都是可以使用 ExecuteTemplate() 来进行数据融合，
+// 但是对于 Execute() 一般与 New() 创建的模板进行配合使用。
+
 // parse HTML templates
 // pass in a list of file names, and get a template
+// 首先先记住一个原则 template.New() 和 ParseFiles() 最好不要一起使用，
+// 如果非要一起使用，那么要记住，New(“TName”) 中的 TName 必须要和 header.tmpl 中定义的{{define name}}中的 name 同名。
 func parseTemplateFiles(filenames ...string) (t *template.Template) {
 	var files []string
 	t = template.New("layout")
@@ -81,6 +94,7 @@ func parseTemplateFiles(filenames ...string) (t *template.Template) {
 	return
 }
 
+// 但是正常的做法应该是这样的，同样的 ExecuteTemplate() 中输入的 name 也必须和模板中 {{define name}} 相同。
 func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
 	var files []string
 	for _, file := range filenames {
