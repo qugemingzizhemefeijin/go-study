@@ -1,13 +1,23 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"time"
+	"./cfg"
 )
 
+// go build
+// ./chitchat-gorm-sqlite.exe --env=testing
 func main() {
-	p("ChitChat", version(), "started at", config.Address)
+	// 配置初始化，以来命令行 --env 参数
+	var env string
+	flag.StringVar(&env, "env", "", "加载 .env 文件，如 --env=testing 加载的是 .env.testing 文件")
+	flag.Parse()
+	cfg.InitConfig(env)
+
+	p("ChitChat", version(), "started at", config.Address, " for ", cfg.GetString("appenv_profiles"))
 
 	// 创建一个默认的多路复用器
 	mux := http.NewServeMux()
