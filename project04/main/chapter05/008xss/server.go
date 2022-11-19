@@ -15,10 +15,13 @@ func getWordPath() (dir string) {
   return
 }
 
+// 上下文感知功能不仅能够自动对HTML转义，它还能防止基于JS，CSS甚至URL的XSS攻击。
 func process(w http.ResponseWriter, r *http.Request) {
+  // IE浏览器可以通过下面的头信息来关闭内置的XSS防御功能。
   w.Header().Set("X-XSS-Protection", "0")
   t, _ := template.ParseFiles(WORK + "/tmpl.html")
   _ = t.Execute(w, r.FormValue("comment"))
+  // 如果想不对HTML进行转义，可以如下操作。
   _ = t.Execute(w, template.HTML(r.FormValue("comment")))
 }
 
